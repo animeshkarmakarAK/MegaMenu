@@ -1,10 +1,8 @@
 import {AppBar, Grid, TextField} from '@mui/material';
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {SubmitHandler, useForm} from "react-hook-form";
-
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-
 import {ApolloClient, gql, InMemoryCache} from "@apollo/client";
 
 const client = new ApolloClient({
