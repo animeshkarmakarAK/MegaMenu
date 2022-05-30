@@ -1,4 +1,4 @@
-import {Grid, TextField} from '@mui/material';
+import {AppBar, Grid, TextField} from '@mui/material';
 import React, {FC, useCallback, useEffect, useState} from 'react';
 import {SubmitHandler, useForm} from "react-hook-form";
 
@@ -55,17 +55,45 @@ const CategoryAddEditPopup: FC<any> = ({
     setSubmittedData(param);
     setIsCreate((prevState => !prevState));
 
+    console.log(param);
+
     console.log(isCreate);
 
-  /*  const results = await fetch("/createCategoryApi", {
-      method: "post",
-      body: data.category + "?" + data.parent,
-    });*/
-
-
-    try {
-      const { data } = await client.mutate({
-        mutation: gql` {
+    if (itemId) {
+      const {data} = await  client.mutate({
+        mutation: gql `
+        mutation {
+updateCategory (
+categoryUid: "${itemId}"
+category: {
+name: "${param.category}"
+}
+){
+message
+statusCode
+result {
+uid
+name
+parent {
+uid
+name
+}
+parents {
+uid
+name
+}
+isActive
+inActiveNote
+createdAt
+updatedAt
+}
+}
+}`,
+      });
+    }else {
+      try {
+        const { data } = await client.mutate({
+          mutation: gql` {
 createCategory(
 category: {
 name:"${param.category}"
@@ -75,15 +103,16 @@ ${param.parent ? "parentCategoryUid:"+ param.parent : ''}
 }
 
    `,
-      });
-      // res.status(200).json({ characters: data.characters.results, error: null });
-    } catch (error) {
-      if (error.message === "404: Not Found") {
-        // res.status(404).json({ characters: null, error: "No Characters found" });
-      } else {
-        /*res
-            .status(500)
-            .json({ characters: null, error: "Internal Error, Please try again" });*/
+        });
+        // res.status(200).json({ characters: data.characters.results, error: null });
+      } catch (error) {
+        if (error.message === "404: Not Found") {
+          // res.status(404).json({ characters: null, error: "No Characters found" });
+        } else {
+          /*res
+              .status(500)
+              .json({ characters: null, error: "Internal Error, Please try again" });*/
+        }
       }
     }
 
@@ -107,23 +136,9 @@ ${param.parent ? "parentCategoryUid:"+ param.parent : ''}
             open={true}
             onClose={props.closeAddEditModal}
         >
-          {/*<AppBar sx={{ position: 'relative' }}>*/}
-          {/*  <Toolbar>*/}
-          {/*    <IconButton*/}
-          {/*        edge="start"*/}
-          {/*        color="inherit"*/}
-          {/*        onClick={props.closeAddEditModal}*/}
-          {/*        aria-label="close"*/}
-          {/*    >*/}
-          {/*    </IconButton>*/}
-          {/*    <Typography sx={{ ml: 2, flex: 1 }} variant="h6" component="div">*/}
-          {/*      close*/}
-          {/*    </Typography>*/}
-          {/*    <Button autoFocus color="inherit" type={"submit"}>*/}
-          {/*      save*/}
-          {/*    </Button>*/}
-          {/*  </Toolbar>*/}
-          {/*</AppBar>*/}
+          <AppBar sx={{ position: 'relative' }}>
+            <title>Add Edit Category</title>
+          </AppBar>
 
           <form onSubmit={handleSubmit(onSubmit)} autoComplete={'off'}>
             <Grid container mt={2}>
