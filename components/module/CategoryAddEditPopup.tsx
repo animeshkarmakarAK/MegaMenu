@@ -4,9 +4,8 @@ import {SubmitHandler, useForm} from "react-hook-form";
 
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
-import CreateCategory from "./CreateCategory";
 
-import { ApolloClient, InMemoryCache, gql } from "@apollo/client";
+import {ApolloClient, gql, InMemoryCache} from "@apollo/client";
 
 const client = new ApolloClient({
   uri: "https://devapiv2.walcart.com/graphql",
@@ -130,17 +129,6 @@ updatedAt
           console.log('500');
         }
       }
-    }
-
-
-    try {
-      if (itemId) {
-        console.log(itemId);
-      } else {
-      }
-      props.onClose();
-      refreshDataTable();
-    } catch (error: any) {
     }
   };
 
