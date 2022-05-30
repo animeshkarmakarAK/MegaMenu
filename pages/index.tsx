@@ -1,38 +1,72 @@
-import Head from 'next/head';
-import { gql, useQuery, useMutation } from '@apollo/client';
-import { useUser } from '@auth0/nextjs-auth0';
+import {gql, useQuery} from '@apollo/client';
 import Link from 'next/link';
-import { AwesomeLink } from '../components/AwesomeLink';
+import {GridColDef} from '@mui/x-data-grid';
+import {Button, Grid, Paper, Table, TableBody, TableCell, TableContainer, TableHead, TableRow} from "@mui/material";
+import {useCallback, useState} from "react";
+import CategoryAddEditPopup from "../components/module/CategoryAddEditPopup";
 
-const AllLinksQuery = gql`
-  query allLinksQuery($first: Int, $after: String) {
-    links(first: $first, after: $after) {
-      pageInfo {
-        endCursor
-        hasNextPage
-      }
-      edges {
-        cursor
-        node {
-          index
-          imageUrl
-          url
-          title
-          category
-          description
-          id
-        }
-      }
-    }
-  }
+const getAllCategories = gql`
+  {
+getCategories(
+pagination: {
+limit: 100
+skip: 0
+}
+){
+message
+statusCode
+result {
+count
+categories {
+uid
+name
+parent {
+uid
+name
+}
+parents {
+uid
+name
+}
+isActive
+inActiveNote
+createdAt
+updatedAt
+}
+}
+}
+}
 `;
 
-function Home() {
-  const { user } = useUser();
+const columns: GridColDef[] = [
+    { field: 'uid', headerName: 'ID', width: 70 },
+    { field: 'name', headerName: 'Name', width: 130 },
+    { field: 'action', headerName: 'Action', width: 130 },
+    ];
 
-  const { data, loading, error, fetchMore } = useQuery(AllLinksQuery, {
+function Home() {
+  const { user } = {user: true};
+
+  const { data, loading, error, fetchMore } = useQuery(getAllCategories, {
     variables: { first: 3 },
   });
+
+   const rows = data?.getCategories?.result?.categories.map((item) => (
+        {...item, id: item.uid}
+    ));
+
+    const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+    const [isOpenAddEditModal, setIsOpenAddEditModal] = useState(false);
+
+    const openAddEditModal = useCallback((itemId: number | null = null) => {
+        setIsOpenAddEditModal(true);
+        setSelectedItemId(itemId);
+    }, []);
+
+    const closeAddEditModal = useCallback(() => {
+        setIsOpenAddEditModal(false);
+        setSelectedItemId(null);
+    }, []);
 
   if (!user) {
     return (
@@ -49,50 +83,61 @@ function Home() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Oh no... {error.message}</p>;
 
-  const { endCursor, hasNextPage } = data?.links.pageInfo;
-
   return (
     <div>
-      <Head>
-        <title>Awesome Links</title>
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-      <div className="container mx-auto max-w-5xl my-20 px-5">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
-          {data?.links.edges.map(({ node }, i) => (
-            <Link href={`/link/${node.id}`} key={i}>
-              <a>
-                <AwesomeLink
-                  title={node.title}
-                  category={node.category}
-                  url={node.url}
-                  id={node.id}
-                  description={node.description}
-                  imageUrl={node.imageUrl}
-                />
-              </a>
-            </Link>
-          ))}
-        </div>
-        {hasNextPage ? (
-          <button
-            className="px-4 py-2 bg-blue-500 text-white rounded my-10"
-            onClick={() => {
-              fetchMore({
-                variables: { after: endCursor },
-              });
-            }}
-          >
-            more
-          </button>
-        ) : (
-          <p className="my-10 text-center font-medium">
-            You've reached the end!
-          </p>
+        <Grid container>
+            <Grid item xs={6} alignContent={"center"}>Category Table</Grid>
+            <Grid item xs={6}>
+                <Button onClick={() => openAddEditModal()}>Add</Button>
+            </Grid>
+
+            <Grid item xs={8} alignItems={"center"}>
+                <TableContainer component={Paper}>
+                    <Table aria-label="simple table">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Id</TableCell>
+                                <TableCell align="right">Name</TableCell>
+                                <TableCell align="right">Action</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {rows.map((row) => (
+                                <TableRow
+                                    key={row.name}
+                                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
+                                >
+                                    <TableCell align="left">{row.uid}</TableCell>
+                                    <TableCell align="right">{row.name}</TableCell>
+                                    <TableCell align="right">
+                                        <Grid container spacing={2} sx={{left: '10px'}}>
+                                            <Grid item xs={2}>
+                                                <a href={'#'} color={'green'} onClick={() => openAddEditModal(row.uid)}>Edit</a>
+                                            </Grid>
+
+                                            <Grid item xs={2}>
+                                                <a color={'red'} href={'#'}>Delete</a>
+                                            </Grid>
+                                        </Grid>
+                                    </TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
+            </Grid>
+        </Grid>
+
+        {isOpenAddEditModal && (
+            <CategoryAddEditPopup
+                key={1}
+                onClose={closeAddEditModal}
+                itemId={selectedItemId}
+            />
         )}
-      </div>
     </div>
   );
+
 }
 
 export default Home;
