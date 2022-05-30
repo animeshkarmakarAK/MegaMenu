@@ -93,31 +93,45 @@ updatedAt
     }else {
       try {
         const { data } = await client.mutate({
-          mutation: gql` {
+          mutation: gql`
+          mutation {
 createCategory(
 category: {
-name:"${param.category}"
-${param.parent ? "parentCategoryUid:"+ param.parent : ''}
+name: "Test-1294"
+parentCategoryUid: "C-YPSLUG"
 }
-)
+){
+message
+statusCode
+result {
+uid
+name
+parent {
+uid
+name
 }
-
+parents {
+uid
+name
+}
+isActive
+inActiveNote
+createdAt
+updatedAt
+}
+}
+}
    `,
         });
-        // res.status(200).json({ characters: data.characters.results, error: null });
       } catch (error) {
         if (error.message === "404: Not Found") {
-          // res.status(404).json({ characters: null, error: "No Characters found" });
+          console.log('404');
         } else {
-          /*res
-              .status(500)
-              .json({ characters: null, error: "Internal Error, Please try again" });*/
+          console.log('500');
         }
       }
     }
 
-
-    // const { characters, error } = await results.json();
 
     try {
       if (itemId) {
