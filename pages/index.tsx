@@ -56,11 +56,17 @@ function Home() {
     ));
 
     const [selectedItemId, setSelectedItemId] = useState<number | null>(null);
+    const [selectedItem, setSelectedItem] = useState<any>({});
     const [isOpenAddEditModal, setIsOpenAddEditModal] = useState(false);
 
     const openAddEditModal = useCallback((itemId: number | null = null) => {
         setIsOpenAddEditModal(true);
         setSelectedItemId(itemId);
+
+        const selectedItem = rows.filter((item) => item.uid == itemId);
+        if (selectedItem.length > 0) {
+            setSelectedItem(selectedItem[0]);
+        }
     }, []);
 
     const closeAddEditModal = useCallback(() => {
@@ -133,6 +139,7 @@ function Home() {
                 key={1}
                 onClose={closeAddEditModal}
                 itemId={selectedItemId}
+                item={selectedItem}
             />
         )}
     </div>

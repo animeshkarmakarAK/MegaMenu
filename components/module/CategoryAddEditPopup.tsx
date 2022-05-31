@@ -10,10 +10,6 @@ const client = new ApolloClient({
   cache: new InMemoryCache(),
 });
 
-const initialValues = {
-  uid: '',
-  name: ''
-};
 
 const CategoryAddEditPopup: FC<any> = ({
   itemId,
@@ -21,6 +17,8 @@ const CategoryAddEditPopup: FC<any> = ({
   ...props
 }) => {
   const isEdit = itemId != null;
+  console.log(props.item);
+  console.log(itemId);
 
   const {
     register,
@@ -51,10 +49,6 @@ const CategoryAddEditPopup: FC<any> = ({
   const onSubmit: SubmitHandler<any> = async (param: any) => {
     setSubmittedData(param);
     setIsCreate((prevState => !prevState));
-
-    console.log(param);
-
-    console.log(isCreate);
 
     if (itemId) {
       const {data} = await  client.mutate({
@@ -94,8 +88,8 @@ updatedAt
           mutation {
 createCategory(
 category: {
-name: "Test-1294"
-parentCategoryUid: "C-YPSLUG"
+name: "${param.category}"
+parentCategoryUid: "${param.parent ? param.parent : ''}"
 }
 ){
 message
@@ -126,6 +120,8 @@ updatedAt
         } else {
           console.log('500');
         }
+      }finally {
+        props.onClose();
       }
     }
   };
@@ -134,7 +130,7 @@ updatedAt
       <div>
         <Dialog
             open={true}
-            onClose={props.closeAddEditModal}
+            onClose={props.onClose}
         >
           <AppBar sx={{ position: 'relative' }}>
             <title>Add Edit Category</title>
@@ -157,7 +153,7 @@ updatedAt
 
               <Grid item xs={12}>
                 <Button type={"submit"}>Save</Button>
-                <Button onClick={props.closeAddEditModal}>cancel</Button>
+                <Button onClick={props.onClose}>cancel</Button>
               </Grid>
             </Grid>
           </form>
