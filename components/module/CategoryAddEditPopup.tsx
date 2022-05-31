@@ -1,5 +1,5 @@
 import {AppBar, Grid, TextField} from '@mui/material';
-import React, {FC, useCallback, useEffect, useState} from 'react';
+import React, {FC, useEffect} from 'react';
 import {SubmitHandler, useForm} from "react-hook-form";
 import Button from '@mui/material/Button';
 import Dialog from '@mui/material/Dialog';
@@ -17,8 +17,6 @@ const CategoryAddEditPopup: FC<any> = ({
   ...props
 }) => {
   const isEdit = itemId != null;
-  console.log(props.item);
-  console.log(itemId);
 
   const {
     register,
@@ -27,18 +25,6 @@ const CategoryAddEditPopup: FC<any> = ({
     formState: {errors, isSubmitting},
   } = useForm<any>({
   });
-
-  const [mutatedData, setMutatedData] = useState<any>(null);
-  const [isCreate, setIsCreate] = useState<boolean>(false);
-  const [submittedData, setSubmittedData] = useState<any>([]);
-
-  const createFunction = useCallback(() => {
-    setMutatedData([]);
-    setIsCreate(false);
-    setSubmittedData([]);
-
-  }, [isCreate]);
-
 
   useEffect(() => {
     if (itemId) {
@@ -50,9 +36,6 @@ const CategoryAddEditPopup: FC<any> = ({
 
 
   const onSubmit: SubmitHandler<any> = async (param: any) => {
-    setSubmittedData(param);
-    setIsCreate((prevState => !prevState));
-
     if (itemId) {
       const {data} = await  client.mutate({
         mutation: gql `
@@ -152,19 +135,15 @@ updatedAt
                       </Grid>
                   )
               }
-
-
               <Grid item xs={12}>
                 <Button type={"submit"}>Save</Button>
                 <Button onClick={props.onClose}>cancel</Button>
               </Grid>
             </Grid>
           </form>
-
         </Dialog>
       </div>
   );
 }
-
 
 export default CategoryAddEditPopup;

@@ -1,5 +1,5 @@
 import {gql, useQuery} from "@apollo/client";
-import {Box, Grid} from "@mui/material";
+import {Box} from "@mui/material";
 import {useCallback, useEffect, useState} from "react";
 
 const getAllCategories = gql`
@@ -97,7 +97,10 @@ function Menu() {
 
     return (
         <div>
-            <h1>Mega Menu</h1>
+            <Box mb={5}>
+                <h1>Mega Menu</h1>
+            </Box>
+
             <Box sx={{position: 'absolute', height: '300px', width: '300px', zIndex: '-1'}}>
                 <ul className={"list"}>
                     {categories.map((category) => {
@@ -106,10 +109,10 @@ function Menu() {
                 </ul>
             </Box>
 
-            <Box sx={{position: 'absolute', height: '300px', width: '300px', left: '100px', zIndex: '2'}}>
+            <Box sx={{position: 'absolute', height: '300px', width: '300px', left: '150px', zIndex: '2'}}>
                 <ul className={"list"}>
                     {subCategories.map((subCategory) => {
-                        return  <li key={subCategory.uid} id={subCategory.uid} onMouseEnter={handleCategoryFocus} onMouseLeave={handleCategoryUnfocus}>{subCategory.name}</li>
+                        return  <li key={subCategory.uid} id={subCategory.uid} onMouseEnter={handleCategoryFocus} onMouseLeave={handleSubCategoryUnfocus}>{subCategory.name}</li>
                     })}
                 </ul>
             </Box>
