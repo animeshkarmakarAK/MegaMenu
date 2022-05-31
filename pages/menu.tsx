@@ -1,5 +1,5 @@
 import {gql, useQuery} from "@apollo/client";
-import {Grid} from "@mui/material";
+import {Box, Grid} from "@mui/material";
 import {useCallback, useEffect, useState} from "react";
 
 const getAllCategories = gql`
@@ -98,30 +98,29 @@ function Menu() {
     return (
         <div>
             <h1>Mega Menu</h1>
-            <Grid container mt={5} justifyContent={'center'}>
-                <Grid item xs={4}>
-                    <ul className={"list"}>
-                        {categories.map((category) => {
-                           return  <li key={category.uid} id={category.uid} onMouseEnter={handleCategoryFocus} onMouseLeave={handleCategoryUnfocus}>{category.name}</li>
-                        })}
-                    </ul>
-                </Grid>
+            <Box sx={{position: 'absolute', height: '300px', width: '300px', zIndex: '-1'}}>
+                <ul className={"list"}>
+                    {categories.map((category) => {
+                        return  <li key={category.uid} id={category.uid} onMouseEnter={handleCategoryFocus} onMouseLeave={handleCategoryUnfocus}>{category.name}</li>
+                    })}
+                </ul>
+            </Box>
 
-                <Grid item xs={4}>
-                    <ul className={"list"}>
-                        {subCategories.map((subCategory) => {
-                            return  <li key={subCategory.uid} id={subCategory.uid} onMouseEnter={handleCategoryFocus} onMouseLeave={handleCategoryUnfocus}>{subCategory.name}</li>
-                        })}
-                    </ul>
-                </Grid>
-                <Grid item xs={4}>
-                    <ul className={"list"}>
-                        {subSubCategories.map((sbsb) => {
-                            return  <li key={sbsb.uid} id={sbsb.uid}>{sbsb.name}</li>
-                        })}
-                    </ul>
-                </Grid>
-            </Grid>
+            <Box sx={{position: 'absolute', height: '300px', width: '300px', left: '100px', zIndex: '2'}}>
+                <ul className={"list"}>
+                    {subCategories.map((subCategory) => {
+                        return  <li key={subCategory.uid} id={subCategory.uid} onMouseEnter={handleCategoryFocus} onMouseLeave={handleCategoryUnfocus}>{subCategory.name}</li>
+                    })}
+                </ul>
+            </Box>
+
+            <Box sx={{position: 'absolute', height: '300px', width: '300px', left: '500px', zIndex: '3'}}>
+                <ul className={"list"}>
+                    {subSubCategories.map((sbsb) => {
+                        return  <li key={sbsb.uid} id={sbsb.uid}>{sbsb.name}</li>
+                    })}
+                </ul>
+            </Box>
         </div>
     )
 

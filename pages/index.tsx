@@ -63,7 +63,7 @@ function Home() {
         setIsOpenAddEditModal(true);
         setSelectedItemId(itemId);
 
-        const selectedItem = rows.filter((item) => item.uid == itemId);
+        const selectedItem = (rows || []).filter((item) => item.uid == itemId);
         if (selectedItem.length > 0) {
             setSelectedItem(selectedItem[0]);
         }

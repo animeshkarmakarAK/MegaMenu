@@ -23,6 +23,7 @@ const CategoryAddEditPopup: FC<any> = ({
   const {
     register,
     handleSubmit,
+      reset,
     formState: {errors, isSubmitting},
   } = useForm<any>({
   });
@@ -38,12 +39,14 @@ const CategoryAddEditPopup: FC<any> = ({
 
   }, [isCreate]);
 
-  useEffect(() => {
-    if (isCreate) {
-      createFunction();
-    }
-  }, [isCreate]);
 
+  useEffect(() => {
+    if (itemId) {
+      reset({
+        category: props.item.name
+      })
+    }
+  }, []);
 
 
   const onSubmit: SubmitHandler<any> = async (param: any) => {
